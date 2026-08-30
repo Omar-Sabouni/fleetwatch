@@ -1,0 +1,254 @@
+{
+  "site_id": "dxb-01",
+  "name": "DXB-01 AMR Logistics",
+  "frame_id": "dxb-01/map",
+  "shift_controls_enabled": true,
+  "bounds": {
+    "width_m": 120,
+    "height_m": 80
+  },
+  "zones": [
+    {
+      "id": "facility-floor",
+      "name": "Main warehouse floor",
+      "kind": "floor",
+      "polygon": [
+        {"x_m": 4, "y_m": 4},
+        {"x_m": 116, "y_m": 4},
+        {"x_m": 116, "y_m": 76},
+        {"x_m": 4, "y_m": 76}
+      ]
+    },
+    {
+      "id": "aisle-central",
+      "name": "Central transfer aisle",
+      "kind": "aisle",
+      "polygon": [
+        {"x_m": 8, "y_m": 32},
+        {"x_m": 112, "y_m": 32},
+        {"x_m": 112, "y_m": 44},
+        {"x_m": 8, "y_m": 44}
+      ]
+    },
+    {
+      "id": "aisle-west",
+      "name": "West circulation aisle",
+      "kind": "aisle",
+      "polygon": [
+        {"x_m": 14, "y_m": 8},
+        {"x_m": 28, "y_m": 8},
+        {"x_m": 28, "y_m": 70},
+        {"x_m": 14, "y_m": 70}
+      ]
+    },
+    {
+      "id": "aisle-east",
+      "name": "East circulation aisle",
+      "kind": "aisle",
+      "polygon": [
+        {"x_m": 80, "y_m": 10},
+        {"x_m": 94, "y_m": 10},
+        {"x_m": 94, "y_m": 70},
+        {"x_m": 80, "y_m": 70}
+      ]
+    },
+    {
+      "id": "aisle-north",
+      "name": "North service aisle",
+      "kind": "aisle",
+      "polygon": [
+        {"x_m": 20, "y_m": 58},
+        {"x_m": 108, "y_m": 58},
+        {"x_m": 108, "y_m": 70},
+        {"x_m": 20, "y_m": 70}
+      ]
+    },
+    {
+      "id": "staging-west",
+      "name": "West staging",
+      "kind": "staging",
+      "polygon": [
+        {"x_m": 6, "y_m": 8},
+        {"x_m": 26, "y_m": 8},
+        {"x_m": 26, "y_m": 25},
+        {"x_m": 6, "y_m": 25}
+      ]
+    },
+    {
+      "id": "dispatch-east",
+      "name": "East dispatch",
+      "kind": "dispatch",
+      "polygon": [
+        {"x_m": 96, "y_m": 8},
+        {"x_m": 114, "y_m": 8},
+        {"x_m": 114, "y_m": 28},
+        {"x_m": 96, "y_m": 28}
+      ]
+    },
+    {
+      "id": "charging-south",
+      "name": "Charging bay",
+      "kind": "charging",
+      "polygon": [
+        {"x_m": 38, "y_m": 6},
+        {"x_m": 60, "y_m": 6},
+        {"x_m": 60, "y_m": 19},
+        {"x_m": 38, "y_m": 19}
+      ]
+    },
+    {
+      "id": "inspection-north",
+      "name": "Inspection and cooldown",
+      "kind": "inspection",
+      "polygon": [
+        {"x_m": 42, "y_m": 62},
+        {"x_m": 70, "y_m": 62},
+        {"x_m": 70, "y_m": 74},
+        {"x_m": 42, "y_m": 74}
+      ]
+    },
+    {
+      "id": "restricted-cage",
+      "name": "Restricted automation cage",
+      "kind": "restricted",
+      "polygon": [
+        {"x_m": 96, "y_m": 54},
+        {"x_m": 113, "y_m": 54},
+        {"x_m": 113, "y_m": 73},
+        {"x_m": 96, "y_m": 73}
+      ]
+    }
+  ],
+  "anchors": [
+    {"id": "uwb-a01", "x_m": 5, "y_m": 5},
+    {"id": "uwb-a02", "x_m": 60, "y_m": 5},
+    {"id": "uwb-a03", "x_m": 115, "y_m": 5},
+    {"id": "uwb-a04", "x_m": 115, "y_m": 40},
+    {"id": "uwb-a05", "x_m": 115, "y_m": 75},
+    {"id": "uwb-a06", "x_m": 60, "y_m": 75},
+    {"id": "uwb-a07", "x_m": 5, "y_m": 75},
+    {"id": "uwb-a08", "x_m": 5, "y_m": 40}
+  ],
+  "routes": [
+    {
+      "id": "route-main-transfer",
+      "name": "West staging to east dispatch",
+      "points": [
+        {"x_m": 16, "y_m": 18},
+        {"x_m": 22, "y_m": 38},
+        {"x_m": 87, "y_m": 38},
+        {"x_m": 104, "y_m": 22},
+        {"x_m": 106, "y_m": 18}
+      ]
+    },
+    {
+      "id": "route-charge-diversion",
+      "name": "Central aisle to charging bay",
+      "points": [
+        {"x_m": 70, "y_m": 38},
+        {"x_m": 60, "y_m": 38},
+        {"x_m": 52, "y_m": 29},
+        {"x_m": 49, "y_m": 16},
+        {"x_m": 49, "y_m": 11}
+      ]
+    },
+    {
+      "id": "route-inspection",
+      "name": "East aisle to inspection",
+      "points": [
+        {"x_m": 87, "y_m": 18},
+        {"x_m": 87, "y_m": 38},
+        {"x_m": 87, "y_m": 64},
+        {"x_m": 68, "y_m": 68},
+        {"x_m": 52, "y_m": 68}
+      ]
+    },
+    {
+      "id": "route-west-patrol",
+      "name": "West safety patrol",
+      "points": [
+        {"x_m": 20, "y_m": 16},
+        {"x_m": 20, "y_m": 62},
+        {"x_m": 36, "y_m": 64},
+        {"x_m": 36, "y_m": 38},
+        {"x_m": 20, "y_m": 38},
+        {"x_m": 20, "y_m": 16}
+      ]
+    },
+    {
+      "id": "route-localization-survey",
+      "name": "Central localization survey",
+      "points": [
+        {"x_m": 12, "y_m": 38},
+        {"x_m": 35, "y_m": 38},
+        {"x_m": 60, "y_m": 38},
+        {"x_m": 82, "y_m": 38},
+        {"x_m": 108, "y_m": 38}
+      ]
+    },
+    {
+      "id": "route-secure-perimeter",
+      "name": "Restricted-cage perimeter",
+      "points": [
+        {"x_m": 88, "y_m": 48},
+        {"x_m": 92, "y_m": 54},
+        {"x_m": 92, "y_m": 72},
+        {"x_m": 96, "y_m": 75},
+        {"x_m": 114, "y_m": 75},
+        {"x_m": 115, "y_m": 54},
+        {"x_m": 110, "y_m": 50},
+        {"x_m": 96, "y_m": 50},
+        {"x_m": 88, "y_m": 48}
+      ]
+    },
+    {
+      "id": "route-staging-shuttle",
+      "name": "Staging replenishment loop",
+      "points": [
+        {"x_m": 12, "y_m": 14},
+        {"x_m": 20, "y_m": 20},
+        {"x_m": 20, "y_m": 38},
+        {"x_m": 42, "y_m": 38},
+        {"x_m": 20, "y_m": 38},
+        {"x_m": 20, "y_m": 20},
+        {"x_m": 12, "y_m": 14}
+      ]
+    },
+    {
+      "id": "route-dispatch-loop",
+      "name": "Dispatch circulation loop",
+      "points": [
+        {"x_m": 104, "y_m": 16},
+        {"x_m": 104, "y_m": 24},
+        {"x_m": 87, "y_m": 38},
+        {"x_m": 68, "y_m": 38},
+        {"x_m": 87, "y_m": 38},
+        {"x_m": 104, "y_m": 24},
+        {"x_m": 104, "y_m": 16}
+      ]
+    }
+  ],
+  "robots": [
+    {"id": "robot-01", "display_name": "DXB-AMR-01", "model": "FW-L100", "route_id": "route-main-transfer"},
+    {"id": "robot-02", "display_name": "DXB-AMR-02", "model": "FW-L100", "route_id": "route-charge-diversion"},
+    {"id": "robot-03", "display_name": "DXB-AMR-03", "model": "FW-I80", "route_id": "route-inspection"},
+    {"id": "robot-04", "display_name": "DXB-AMR-04", "model": "FW-P60", "route_id": "route-west-patrol"},
+    {"id": "robot-05", "display_name": "DXB-AMR-05", "model": "FW-S40", "route_id": "route-localization-survey"},
+    {"id": "robot-06", "display_name": "DXB-AMR-06", "model": "FW-P60", "route_id": "route-secure-perimeter"},
+    {"id": "robot-07", "display_name": "DXB-AMR-07", "model": "FW-L100", "route_id": "route-staging-shuttle"},
+    {"id": "robot-08", "display_name": "DXB-AMR-08", "model": "FW-L100", "route_id": "route-dispatch-loop"}
+  ],
+  "policies": {
+    "low_battery": {"open": 20, "recover": 25},
+    "overheating": {"open": 75, "recover": 70},
+    "stale_telemetry": {"open_seconds": 120, "recover_seconds": 120},
+    "localization_degraded": {"open_m": 3, "recover_m": 2}
+  },
+  "scenario": {
+    "id": "dxb-01-morning-shift",
+    "label": "DXB-01 morning shift",
+    "initial_tick": 15,
+    "default_ticks_per_second": 2,
+    "total_ticks": 28
+  }
+}

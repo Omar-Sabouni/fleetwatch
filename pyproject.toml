@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=84,<85"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fleetwatch"
+version = "2.0.0"
+description = "A compact autonomous-fleet operations board"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+  "fastapi>=0.139,<0.140",
+  "pydantic>=2.13,<2.14",
+  "uvicorn>=0.52,<0.53",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["data/*.json", "data/*.jsonl", "static/*", "static/assets/*"]

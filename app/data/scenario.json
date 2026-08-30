@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "dxb-01-morning-shift",
+  "site_id": "dxb-01",
+  "label": "DXB-01 morning shift",
+  "base_time": "2026-01-15T05:00:00Z",
+  "tick_interval_seconds": 20,
+  "total_ticks": 28,
+  "default_ticks_per_second": 2,
+  "loop": true,
+  "default_selected_robot_id": "robot-06"
+}

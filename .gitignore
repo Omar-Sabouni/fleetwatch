@@ -1,0 +1,11 @@
+.venv/
+node_modules/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*.db*
+dist/
+build/
+.env*
+.npmrc
+.DS_Store
