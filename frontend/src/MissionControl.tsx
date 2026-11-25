@@ -331,7 +331,7 @@ function AssetPane({
         ) : (
           <p className="history-loading">{historyState.loading ? "Loading…" : "No history yet."}</p>
         )}
-        <p className="signal-line">Last heard {fleetAge(robot, snapshot)} ago, link {reading(robot.linkQuality, "%")}.</p>
+        <p className="signal-line">Last reading {fleetAge(robot, snapshot)} ago. Link quality is {reading(robot.linkQuality, "%")}.</p>
       </section>
     </aside>
   );

@@ -1302,14 +1302,14 @@ class FleetStore:
             event_id=str(event["event_id"]),
             value=battery,
             active_message=(
-                f"Battery is low at {battery:g}%"
+                f"Battery is low at {battery:g}%."
                 if battery < self.low_battery_open
                 else (
-                    f"Battery is recovering at {battery:g}%; incident remains open until "
-                    f"≥{self.low_battery_recover:g}%"
+                    f"Battery is recovering at {battery:g}%. The incident stays open until "
+                    f"it reaches {self.low_battery_recover:g}%."
                 )
             ),
-            recovery_message=f"Battery recovered to {battery:g}%",
+            recovery_message=f"Battery recovered to {battery:g}%.",
         )
         temperature = float(event["temperature"])
         self._transition_alert(
@@ -1322,14 +1322,14 @@ class FleetStore:
             event_id=str(event["event_id"]),
             value=temperature,
             active_message=(
-                f"Temperature is high at {temperature:g}°C"
+                f"Temperature is high at {temperature:g}°C."
                 if temperature > self.overheating_open
                 else (
-                    f"Cooling at {temperature:g}°C; incident remains open until "
-                    f"≤{self.overheating_recover:g}°C"
+                    f"Cooling, now {temperature:g}°C. The incident stays open until "
+                    f"it drops to {self.overheating_recover:g}°C."
                 )
             ),
-            recovery_message=f"Temperature recovered to {temperature:g}°C",
+            recovery_message=f"Temperature recovered to {temperature:g}°C.",
         )
 
     def _evaluate_spatial_alerts(self, event: dict[str, Any]) -> None:
@@ -1347,14 +1347,14 @@ class FleetStore:
             event_id=str(event["event_id"]),
             value=accuracy,
             active_message=(
-                f"Position uncertain to ±{accuracy:.2f} m"
+                f"Position is uncertain to ±{accuracy:.2f} m."
                 if accuracy > self.localization_open_metres
                 else (
-                    f"Position uncertain to ±{accuracy:.2f} m and improving; "
-                    f"incident remains open until ≤{self.localization_recover_metres:.2f} m"
+                    f"Position is uncertain to ±{accuracy:.2f} m and improving. The incident "
+                    f"stays open until it is within ±{self.localization_recover_metres:.2f} m."
                 )
             ),
-            recovery_message=f"Position uncertainty back to ±{accuracy:.2f} m",
+            recovery_message=f"Position uncertainty is back to ±{accuracy:.2f} m.",
         )
         if self.site is None:
             return
@@ -1369,11 +1369,11 @@ class FleetStore:
             event_id=str(event["event_id"]),
             value=1.0 if restricted_zone else 0.0,
             active_message=(
-                f"Entered {self.site.zone_name(restricted_zone)}"
+                f"Entered {self.site.zone_name(restricted_zone)}."
                 if restricted_zone
                 else ""
             ),
-            recovery_message="Left the restricted zone",
+            recovery_message="Left the restricted zone.",
         )
 
     def _latest_rows(self) -> list[sqlite3.Row]:
@@ -1420,8 +1420,8 @@ class FleetStore:
                     transition_epoch=clock_epoch,
                     event_id=str(row["event_id"]),
                     value=lag,
-                    active_message=f"Telemetry is stale by {lag:g} seconds",
-                    recovery_message="Telemetry is current again",
+                    active_message=f"Telemetry is {lag:g} seconds old.",
+                    recovery_message="Telemetry is current again.",
                 )
                 or changed
             )
@@ -1699,7 +1699,7 @@ class FleetStore:
                         acknowledge_at, acknowledge_epoch, row
                     )
                     next_version = int(row["version"]) + 1
-                    message = f"Incident acknowledged by {actor}"
+                    message = f"Incident acknowledged by {actor}."
                     self.connection.execute(
                         """
                         UPDATE alerts
