@@ -1,15 +1,15 @@
 # FleetWatch
 
-FleetWatch is a compact operations board for an eight-robot warehouse fleet. It answers three questions: which unit needs attention, where is it, and what changed?
+FleetWatch is an operations board for an eight-robot warehouse fleet. It shows which robot needs attention, where it is, and what changed.
 
-The DXB-01 shift includes low battery, overheating, stale telemetry, poor localization, and restricted-zone incidents. The app opens with an active fleet state instead of an empty dashboard.
+The DXB-01 shift includes low battery, overheating, stale telemetry, poor localization, and restricted-zone incidents.
 
 ## What is here
 
-- A flat fleet ledger sorted by urgency.
+- A robot roster sorted by urgency.
 - A facility plan with live robot positions, the selected route, recent movement, and localization uncertainty.
 - One selected-unit pane with alarms, acknowledgement, current readings, policy limits, and three short trends.
-- Compact shift controls for the active operation.
+- Shift controls to run, pause, step, and restart the replay.
 - FastAPI, SQLite, React, and a production frontend.
 
 ## Run

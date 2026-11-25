@@ -71,6 +71,12 @@ class SiteConfiguration:
                 return str(zone["id"])
         return None
 
+    def zone_name(self, zone_id: str) -> str:
+        for zone in self._payload["zones"]:
+            if zone.get("id") == zone_id:
+                return str(zone.get("name") or zone_id)
+        return zone_id
+
     def zone_at(self, x_m: float, y_m: float) -> str | None:
         # Prefer operational regions over the floor/aisle backdrop. Restricted
         # regions remain visible as the current zone as well as an incident.
