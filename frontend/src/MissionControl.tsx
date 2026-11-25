@@ -4,8 +4,10 @@ import { FacilityMap } from "./FacilityMap";
 import { formatTimestamp } from "./time";
 import type {
   Alert,
+  AlertStatus,
   DashboardSnapshot,
   HistoryEvent,
+  ReplayState,
   Robot,
   SiteConfig,
 } from "./types";
@@ -14,10 +16,34 @@ import type { RobotHistoryState } from "./useFleetWatch";
 
 type ReplayAction = "restart" | "start" | "pause" | "step";
 
+const ALERT_STATUS_LABELS: Record<AlertStatus, string> = {
+  opened: "Open",
+  acknowledged: "Acknowledged",
+  recovered: "Recovered",
+};
+
+const REPLAY_STATE_LABELS: Record<ReplayState, string> = {
+  paused: "Paused",
+  running: "Running",
+  complete: "Complete",
+  error: "Stopped by an error",
+};
+
+const SHIFT_ANNOUNCEMENTS: Record<ReplayAction, string> = {
+  start: "Shift running.",
+  pause: "Shift paused.",
+  step: "Shift advanced one step.",
+  restart: "Shift restarted.",
+};
+
+function sentenceCase(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 const INCIDENTS: Record<string, { code: string; label: string }> = {
   geofence_breach: { code: "ZONE", label: "Restricted zone" },
-  overheating: { code: "TEMP", label: "Motor temperature" },
-  stale_telemetry: { code: "LINK", label: "Telemetry stale" },
+  overheating: { code: "TEMP", label: "Overheating" },
+  stale_telemetry: { code: "LINK", label: "Stale telemetry" },
   localization_degraded: { code: "LOC", label: "Position uncertainty" },
   low_battery: { code: "BATT", label: "Low battery" },
 };
@@ -91,7 +117,7 @@ function SystemBar({
       </div>
       <time dateTime={snapshot?.fleetTime ?? ""}>{formatTimestamp(snapshot?.fleetTime ?? null)}</time>
       <span className="connection-state" data-state={siteIsFallback ? "offline" : connection}>
-        {siteIsFallback ? "Site data offline" : connection === "connected" ? "Live" : connection}
+        {siteIsFallback ? "Site data offline" : connection === "connected" ? "Live" : connection === "connecting" ? "Connecting…" : "Offline. Retrying…"}
       </span>
     </header>
   );
@@ -154,7 +180,7 @@ function FleetLedger({
                   </th>
                   <td>{robot.battery === null ? "—" : `${robot.battery.toFixed(0)}%`}</td>
                   <td className="state-code">
-                    {issue ? incidentInfo(issue).label : robot.stale ? "Telemetry stale" : "OK"}
+                    {issue ? incidentInfo(issue).label : robot.stale ? "Stale telemetry" : "OK"}
                   </td>
                 </tr>
               );
@@ -182,7 +208,7 @@ function AttentionQueue({
         <h2 id="attention-heading">Incidents</h2>
         <span>{open.length}</span>
       </header>
-      {open.length === 0 ? <p className="all-clear">Nothing open.</p> : null}
+      {open.length === 0 ? <p className="all-clear">No open incidents.</p> : null}
       <ol>
         {open.map((alert) => (
           <li key={alert.id} data-severity={alert.severity}>
@@ -257,7 +283,7 @@ function AssetPane({
   onAcknowledge: (alert: Alert) => void;
 }): React.JSX.Element {
   if (robot === null) {
-    return <aside className="asset-pane empty-asset">Select a fleet unit</aside>;
+    return <aside className="asset-pane empty-asset">Select a robot to see its readings.</aside>;
   }
   const alerts = activeAlerts(snapshot.alerts).filter((alert) => alert.robotId === robot.id);
   const history = historyState.history?.robotId === robot.id ? historyState.history : null;
@@ -267,13 +293,13 @@ function AssetPane({
       <header className="asset-heading" data-status={alerts[0]?.severity ?? robot.status}>
         <div>
           <h2 id="asset-heading">{robotName(site, robot.id)}</h2>
-          <span>{robot.mode.replaceAll("_", " ")} in {zoneName(site, robot.zoneId)}, on {route}</span>
+          <span>{sentenceCase(robot.mode.replaceAll("_", " "))} in {zoneName(site, robot.zoneId)}, on {route}</span>
         </div>
       </header>
 
       <section className="asset-alarms" aria-labelledby="asset-alarms-heading">
         <h3 id="asset-alarms-heading" className="visually-hidden">Incidents</h3>
-        {alerts.length === 0 ? <p className="all-clear">Nothing wrong.</p> : null}
+        {alerts.length === 0 ? <p className="all-clear">No open incidents.</p> : null}
         {alerts.map((alert) => (
           <article key={alert.id} data-severity={alert.severity}>
             <header>
@@ -286,7 +312,7 @@ function AssetPane({
                 {pending === `ack-${alert.id}` ? "Acknowledging…" : "Acknowledge"}
               </button>
             ) : (
-              <span className="alarm-state">{alert.status}</span>
+              <span className="alarm-state">{ALERT_STATUS_LABELS[alert.status]}</span>
             )}
           </article>
         ))}
@@ -329,10 +355,10 @@ function ReplayBar({
     <footer className="replay-bar">
       <strong>Shift</strong>
       <span>{site.scenario.label}</span>
-      <span className="replay-count">Update {snapshot.replay.current}/{snapshot.replay.total || site.scenario.totalTicks}</span>
+      <span className="replay-count">Step {snapshot.replay.current} of {snapshot.replay.total || site.scenario.totalTicks}</span>
       <progress max="100" value={snapshot.replay.progress} aria-label="Shift progress" />
       {readOnly ? (
-        <span className="replay-state">{snapshot.replay.state}</span>
+        <span className="replay-state">{REPLAY_STATE_LABELS[snapshot.replay.state]}</span>
       ) : (
         <div className="replay-controls">
           <label>Rate
@@ -395,7 +421,7 @@ export function MissionControl(): React.JSX.Element {
         snapshot.replay.revision,
         action === "start" || action === "restart" ? { ticks_per_second: speed } : undefined,
       );
-      setAnnouncement(`Shift ${action} complete.`);
+      setAnnouncement(SHIFT_ANNOUNCEMENTS[action]);
       feed.refresh();
     } catch (reason) {
       setActionError(reason instanceof Error ? reason.message : "Shift action failed.");
@@ -431,7 +457,7 @@ export function MissionControl(): React.JSX.Element {
       />
       {visibleError ? (
         <div className="error-strip" role="alert">
-          <strong>Feed error</strong><span>{visibleError}</span>
+          <span>{visibleError}</span>
           <button type="button" onClick={() => { setActionError(null); feed.clearError(); }}>Dismiss</button>
         </div>
       ) : null}

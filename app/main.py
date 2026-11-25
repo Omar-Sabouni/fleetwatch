@@ -454,7 +454,7 @@ def create_app(
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         if not (static_dir / "index.html").is_file():
             raise RuntimeError(
-                "FleetWatch frontend assets are missing; build frontend/ before startup"
+                "FleetWatch frontend assets are missing. Run npm install && npm run build."
             )
         services: Services | None = None
         try:
@@ -491,12 +491,15 @@ def create_app(
             return await ensure_initialized()
         except Exception as exc:
             LOGGER.exception("FleetWatch service initialization failed")
-            raise HTTPException(status_code=503, detail="service unavailable") from exc
+            raise HTTPException(
+                status_code=503,
+                detail="FleetWatch failed to start. Check the server log and restart it.",
+            ) from exc
 
     async def mutable_profile() -> None:
         if profile == PUBLIC_DEMO_PROFILE:
             raise HTTPException(
-                status_code=403, detail="mutations are disabled in read-only mode"
+                status_code=403, detail="This board is read-only."
             )
 
     application.add_middleware(
@@ -519,7 +522,9 @@ def create_app(
             services.site.public_payload()
         except Exception as exc:
             LOGGER.warning("FleetWatch readiness probe failed: %s", exc)
-            raise HTTPException(status_code=503, detail="storage unavailable") from exc
+            raise HTTPException(
+                status_code=503, detail="FleetWatch can't reach its database. Restart it."
+            ) from exc
         return {"status": "ok"}
 
     @application.get("/readyz", response_model=HealthResponse)
@@ -625,7 +630,7 @@ def create_app(
                 },
             )
         if result == "recovered":
-            raise HTTPException(status_code=409, detail="recovered alerts cannot be acknowledged")
+            raise HTTPException(status_code=409, detail="This incident has already recovered.")
         assert alert is not None
         response.headers["ETag"] = f'"alert-{alert_id}-{alert["version"]}"'
         return alert

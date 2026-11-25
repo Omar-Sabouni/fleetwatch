@@ -1347,14 +1347,14 @@ class FleetStore:
             event_id=str(event["event_id"]),
             value=accuracy,
             active_message=(
-                f"95% localization uncertainty grew to {accuracy:.2f} m"
+                f"Position uncertain to ±{accuracy:.2f} m"
                 if accuracy > self.localization_open_metres
                 else (
-                    f"95% localization uncertainty is recovering at {accuracy:.2f} m; "
+                    f"Position uncertain to ±{accuracy:.2f} m and improving; "
                     f"incident remains open until ≤{self.localization_recover_metres:.2f} m"
                 )
             ),
-            recovery_message=f"95% localization uncertainty recovered to {accuracy:.2f} m",
+            recovery_message=f"Position uncertainty back to ±{accuracy:.2f} m",
         )
         if self.site is None:
             return
@@ -1368,8 +1368,12 @@ class FleetStore:
             transition_epoch=float(event["timestamp_epoch"]),
             event_id=str(event["event_id"]),
             value=1.0 if restricted_zone else 0.0,
-            active_message=f"Robot entered restricted zone {restricted_zone}",
-            recovery_message="Robot left the restricted zone",
+            active_message=(
+                f"Entered {self.site.zone_name(restricted_zone)}"
+                if restricted_zone
+                else ""
+            ),
+            recovery_message="Left the restricted zone",
         )
 
     def _latest_rows(self) -> list[sqlite3.Row]:

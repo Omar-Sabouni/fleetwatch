@@ -266,12 +266,24 @@ export const FALLBACK_SITE: SiteConfig = {
   deployment: { readOnly: true },
 };
 
+const ERROR_CODES: Record<string, string> = {
+  alert_revision_conflict: "Someone else updated this incident first. Check it and try again.",
+  replay_revision_conflict: "The shift changed since this page loaded. Try again.",
+  precondition_required: "This page is out of date. Reload it and try again.",
+};
+
 async function responseError(response: Response): Promise<string> {
+  const fallback = `The request failed with error ${response.status}. Try again.`;
   try {
     const payload = object((await response.json()) as unknown);
-    return text(payload.detail ?? payload.message, `${response.status} ${response.statusText}`);
+    const detail = payload.detail;
+    if (detail !== null && typeof detail === "object") {
+      const fields = object(detail);
+      return ERROR_CODES[text(fields.code)] ?? text(fields.message, fallback);
+    }
+    return text(detail ?? payload.message, fallback);
   } catch {
-    return `${response.status} ${response.statusText}`;
+    return fallback;
   }
 }
 
